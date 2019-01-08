@@ -102,7 +102,7 @@ class AssetsAggregator {
      * @param type $endDelimiter
      * @return type
      */
-    private function getContents($str, $startDelimiter, $endDelimiter) {
+    private static function getContents($str, $startDelimiter, $endDelimiter) {
         $contents = array();
         $startDelimiterLength = strlen($startDelimiter);
         $endDelimiterLength = strlen($endDelimiter);
@@ -126,7 +126,7 @@ class AssetsAggregator {
      * @param type $second
      * @return type
      */
-    private function getContent($str, $first, $second) {
+    private static function getContent($str, $first, $second) {
         $startsAt = strpos($str, $first) + strlen($first);
         $endsAt = strpos($str, $second, $startsAt);
         $result = substr($str, $startsAt, $endsAt - $startsAt);
