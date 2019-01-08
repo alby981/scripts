@@ -75,8 +75,8 @@ class AssetsAggregator {
         }
         $save = false;
         $final = '';
-        foreach ($contents as $css) {
-            $filename = $this->getContent($css, "{$urlT}='", "'");
+        foreach ($contents as $asset) {
+            $filename = $this->getContent($asset, "{$urlT}='", "'");
             if (!empty($filename)) {
                 if (substr($filename, 0, 5) == 'http:' || substr($filename, 0, 6) == 'https:') {
                     $filename = str_replace("{$urlT}='", "", $filename);
