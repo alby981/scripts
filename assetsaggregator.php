@@ -1,7 +1,5 @@
 <?php
 
-include_once "grab.php";
-
 class AssetsAggregator {
 
     private $html = "";
@@ -14,15 +12,16 @@ class AssetsAggregator {
         $this->dir = $folder;
         $this->type = $type;
     }
-    
+
     /**
      * 
      * @return type
      */
     public function process() {
-        return $this->checkPermissions()->getWebsiteContent()->parseContent();
+        $this->checkPermissions()->getWebsiteContent()->parseContent();
+        die("assets aggregator execution finished.");
     }
-    
+
     /**
      * Check folder permissions
      * @return $this
@@ -51,33 +50,33 @@ class AssetsAggregator {
         $this->html = $html;
         return $this;
     }
-    
+
     /**
      * Parse content of the html website
      * @return $this
      */
     private function parseContent() {
-        
-        switch($this->type) {
+
+        switch ($this->type) {
             case 'css':
                 $startString = "<link rel='stylesheet'";
-                $finalName = 'final_'.time().'.css';
+                $finalName = 'final_' . time() . '.css';
                 $urlT = 'href';
                 break;
             case 'js':
                 $startString = "<script type='text/javascript'";
-                $finalName = 'final_'.time().'.js';
+                $finalName = 'final_' . time() . '.js';
                 $urlT = 'src';
                 break;
         }
-        $contents = getContents($this->html, $startString , ">");
+        $contents = $this->getContents($this->html, $startString, ">");
         if (empty($contents)) {
-            $contents = getContents($this->html, $startString, ">");
+            $contents = $this->getContents($this->html, $startString, ">");
         }
         $save = false;
         $final = '';
         foreach ($contents as $css) {
-            $filename = getContent($css, "{$urlT}='", "'");
+            $filename = $this->getContent($css, "{$urlT}='", "'");
             if (!empty($filename)) {
                 if (substr($filename, 0, 5) == 'http:' || substr($filename, 0, 6) == 'https:') {
                     $filename = str_replace("{$urlT}='", "", $filename);
@@ -95,10 +94,50 @@ class AssetsAggregator {
         }
         return $this;
     }
+    
+    /**
+     * 
+     * @param type $str
+     * @param type $startDelimiter
+     * @param type $endDelimiter
+     * @return type
+     */
+    private function getContents($str, $startDelimiter, $endDelimiter) {
+        $contents = array();
+        $startDelimiterLength = strlen($startDelimiter);
+        $endDelimiterLength = strlen($endDelimiter);
+        $startFrom = $contentStart = $contentEnd = 0;
+        while (false !== ($contentStart = strpos($str, $startDelimiter, $startFrom))) {
+            $contentStart += $startDelimiterLength;
+            $contentEnd = strpos($str, $endDelimiter, $contentStart);
+            if (false === $contentEnd) {
+                break;
+            }
+            $contents[] = substr($str, $contentStart, $contentEnd - $contentStart);
+            $startFrom = $contentEnd + $endDelimiterLength;
+        }
+
+        return $contents;
+    }
+    
+    /**
+     * @param type $str
+     * @param type $first
+     * @param type $second
+     * @return type
+     */
+    private function getContent($str, $first, $second) {
+        $startsAt = strpos($str, $first) + strlen($first);
+        $endsAt = strpos($str, $second, $startsAt);
+        $result = substr($str, $startsAt, $endsAt - $startsAt);
+        return $result;
+    }
+
     private function minify() {
         //TODO
     }
+
 }
 
-$css = new AssetsAggregator("https://ziobelo.com", "finalCss","js");
-$css->process();
+$assets = new AssetsAggregator("https://ziobelo.com", "assets", "css");
+$assets->process();
