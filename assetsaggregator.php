@@ -139,5 +139,5 @@ class AssetsAggregator {
 
 }
 
-$assets = new AssetsAggregator("https://ziobelo.com", "assets", "css");
+$assets = new AssetsAggregator("https://ziobelo.com", "assets", "js");
 $assets->process();
