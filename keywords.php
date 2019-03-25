@@ -10,8 +10,6 @@ foreach ($file as $row) {
     $exp = explode(",",$row);
     $firstColumn = str_replace($chars,"",trim($exp[0]));
     $totale = str_replace($chars,"",trim($exp[2]));
-    $punteggiatura = [".",",",";"];
-    $vocali = ["a","e","o","i"];
 
     if (stripos($firstColumn, "premium") !== false) {
 	if($totale > 1500) {
